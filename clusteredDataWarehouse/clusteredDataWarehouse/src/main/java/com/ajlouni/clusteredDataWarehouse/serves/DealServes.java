@@ -1,9 +1,12 @@
 package com.ajlouni.clusteredDataWarehouse.serves;
 
 import com.ajlouni.clusteredDataWarehouse.entity.FxDeal;
+import com.ajlouni.clusteredDataWarehouse.exception.DealImportException;
 import com.ajlouni.clusteredDataWarehouse.exception.DuplicateDealDataException;
 import com.ajlouni.clusteredDataWarehouse.exception.InvalidDealDataException;
 import com.ajlouni.clusteredDataWarehouse.repository.DealDataRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,16 +16,25 @@ import java.util.List;
 public class DealServes {
     @Autowired
     private DealDataRepository dealDataRepository;
-    public List<FxDeal> getAllFx(){
+    private final Logger logger = LoggerFactory.getLogger(DealServes.class);
+
+    public List<FxDeal> getAllFx() {
         return dealDataRepository.findAll();
     }
-    public FxDeal importDeal(FxDeal dealData) {
-        validateDealData(dealData);
 
-        if (dealDataRepository.existsByDealUniqueId(dealData.getDealUniqueId())) {
-            throw new DuplicateDealDataException("Deal with ID " + dealData.getDealUniqueId() + " already exists");
+    public FxDeal importDeal(FxDeal dealData) {
+        try {
+            logger.info("Start validation request");
+            validateDealData(dealData);
+            if (dealDataRepository.existsByDealUniqueId(dealData.getDealUniqueId())) {
+                throw new DuplicateDealDataException("Deal with ID " + dealData.getDealUniqueId() + " already exists");
+            }
+            logger.info("Data validated successfully");
+            return dealDataRepository.save(dealData);
+        } catch (Exception e) {
+            logger.error("Error during deal import", e);
+            throw new DealImportException("Error during deal import", e);
         }
-        return dealDataRepository.save(dealData);
     }
 
     private void validateDealData(FxDeal dealData) {
