@@ -1,0 +1,4 @@
+Hello, this is Hamza's assignment for the Java Developer position at ProgressSoft Corporation. The project is titled "Clustered Data Warehouse"
+
+Refer to README.md for the project description:
+https://github.com/hamzaaj2/progressSoft/blob/master/clusteredDataWarehouse/clusteredDataWarehouse/README.md

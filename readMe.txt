@@ -1,1 +1,0 @@
-Hello, this is Hamza's assignment for the Java Developer position at ProgressSoft Corporation. The project is titled "Clustered Data Warehouse"
