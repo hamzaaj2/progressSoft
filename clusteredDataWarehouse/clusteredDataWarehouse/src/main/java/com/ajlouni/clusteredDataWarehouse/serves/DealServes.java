@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import java.util.Currency;
 import java.util.List;
 
 @Service
@@ -26,9 +26,14 @@ public class DealServes {
         try {
             logger.info("Start validation request");
             validateDealData(dealData);
+            logger.info("Data required existence validation succeeded");
             if (dealDataRepository.existsByDealUniqueId(dealData.getDealUniqueId())) {
                 throw new DuplicateDealDataException("Deal with ID " + dealData.getDealUniqueId() + " already exists");
             }
+            logger.info("Data duplication validation succeeded");
+            validateIsoCode(dealData.getFromCurrencyIsoCode());
+            validateIsoCode(dealData.getToCurrencyIsoCode());
+            logger.info("Data ISO code validation succeeded");
             logger.info("Data validated successfully");
             return dealDataRepository.save(dealData);
         } catch (Exception e) {
@@ -54,5 +59,16 @@ public class DealServes {
             throw new InvalidDealDataException("Deal amount must be a non-zero positive number");
         }
 
+    }
+    private void validateIsoCode(String code) {
+        boolean flag = false;
+        for(Currency currency : Currency.getAvailableCurrencies()) {
+            if(currency.getCurrencyCode().equals(code)) {
+                flag = true;
+                break;
+            }
+        }
+        if(!flag)
+            throw new InvalidDealDataException("currency ISO code is invalid");
     }
 }
