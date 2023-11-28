@@ -1,6 +1,7 @@
 package com.ajlouni.clusteredDataWarehouse.serves;
 
 import com.ajlouni.clusteredDataWarehouse.entity.FxDeal;
+import com.ajlouni.clusteredDataWarehouse.exception.DealImportException;
 import com.ajlouni.clusteredDataWarehouse.exception.InvalidDealDataException;
 import com.ajlouni.clusteredDataWarehouse.repository.DealDataRepository;
 import org.junit.jupiter.api.Test;
@@ -53,12 +54,12 @@ class DealServesTest {
         Mockito.when(dealDataRepository.existsByDealUniqueId(any())).thenReturn(true);
         FxDeal duplicateDeal = new FxDeal();
         duplicateDeal.setDealUniqueId("123");
-        assertThrows(InvalidDealDataException.class, () -> dealServes.importDeal(duplicateDeal));
+        assertThrows(DealImportException.class, () -> dealServes.importDeal(duplicateDeal));
     }
 
     @Test
     void importDeal_InvalidDeal() {
         FxDeal invalidDeal = new FxDeal();
-        assertThrows(InvalidDealDataException.class, () -> dealServes.importDeal(invalidDeal));
+        assertThrows(DealImportException.class, () -> dealServes.importDeal(invalidDeal));
     }
 }
